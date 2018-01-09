@@ -18,6 +18,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		MyDaemonDaemonService daemonService = new MyDaemonDaemonService();
+		//daemonService.getDaemon().start();
 		URTestInstallationNodeService helloWorldInstallationNodeService = new URTestInstallationNodeService(daemonService);
 
 		bundleContext.registerService(InstallationNodeService.class, helloWorldInstallationNodeService, null);

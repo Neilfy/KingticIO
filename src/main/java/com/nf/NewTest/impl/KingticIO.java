@@ -2,11 +2,13 @@ package com.nf.NewTest.impl;
 
 public class KingticIO  {
 	public String defaultName;
+	public String displayName;
 	public String addr;
-	public int rule;
+	public String rule;
 	
-	public KingticIO(String name, String addr, int rule){
-		defaultName = name;
+	public KingticIO(String defaultName, String displayName, String addr, String rule){
+		this.defaultName = defaultName;
+		this.displayName = displayName;
 		this.addr = addr;
 		this.rule = rule;
 	}

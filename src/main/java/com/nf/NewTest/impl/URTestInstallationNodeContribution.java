@@ -2,6 +2,8 @@ package com.nf.NewTest.impl;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,13 +28,22 @@ import com.nf.NewTest.impl.MyDaemonDaemonService;
 import com.nf.NewTest.impl.XmlRpcMyDaemonInterface;
 
 public class URTestInstallationNodeContribution implements InstallationNodeContribution {
+	
+	//io名，地址，权限（0：启用，1：程序员操作，2：禁用）
+	private String[] addrs={"kingtic_in_0,0,0", "kingtic_in_1,10,0"
+			, "kingtic_in_2,11,0","kingtic_out_0,100,0"
+			, "kingtic_out_1,101,0"};
+	
 
 	private static final String ENABLED_KEY = "enabled";
 	private static final String XMLRPC_VARIABLE = "my_daemon";
 	
+	
 	private String IP = "";
 	
 	ArrayList<Object> ioItems = new ArrayList<Object>();
+	ArrayList<KingticIO> ioInfo = new ArrayList<KingticIO>();
+	//Map<String,KingticIO> ioInfo = new HashMap<String,KingticIO>();
 
 	private DataModel model;
 	
@@ -43,11 +54,36 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 	public URTestInstallationNodeContribution(MyDaemonDaemonService daemonService, DataModel model) {
 		this.daemonService = daemonService;
 		this.model = model;
-		ArrayList<KingticIO> ioInfo = new ArrayList<KingticIO>();
-		ioInfo.add(new KingticIO("kingtic_in_0","",0));
-		ioInfo.add(new KingticIO("kingtic_in_1","",0));
 		
+		//读IO配置信息  
+		for(int i=0; i<addrs.length; ++i)
+		{
+			String[] addr = addrs[i].split(",");
+			ioInfo.add(new KingticIO(addr[0], addr[0], addr[1], addr[2]));
+		}
+		
+		//根据用户设定更新ioInfo
+		for(int i=0; i<ioInfo.size(); ++i)
+		{
+			KingticIO io = ioInfo.get(i);
+			if(model.isSet(io.defaultName))
+			{
+				String[] vals = model.get(io.defaultName, io.defaultName+","+io.rule).split(",");
+				if(vals.length == 2)
+				{
+					io.displayName = vals[0];
+					io.rule = vals[1];
+				}
+			}
+			ioItems.add(io.displayName);
+		}
+
 		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", 40404);
+	}
+	
+	private String getIO(String key)
+	{
+		return "";
 	}
 
 	@Input(id = "btnEnableDaemon")
@@ -118,14 +154,18 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
 			int idx = selIOs.getSelectedIndex();
 			String val = ioNameText.getText();
+			
+			KingticIO io = ioInfo.get(idx);
 			if(!val.isEmpty())
 			{
-				ioItems.set(idx, val);
+				io.displayName = val;
+				model.set(io.defaultName, val+","+io.rule);
 			}else
 			{
-				ioItems.set(idx, "kingtic_in_io"+idx);
+				io.displayName = io.defaultName;
+				model.remove(io.defaultName);
 			}
-			selIOs.setItems(ioItems);
+			updateName(idx, io.displayName);
 		}
 	}
 	
@@ -142,13 +182,14 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 		enableDaemonButton.setText("Start Daemon");
 		disableDaemonButton.setText("Stop daemon");
 		connectTCPButton.setText("连接");
+		System.out.println("My Daemon\n");
 		selIOs.setItems(ioItems);
-		try {
-			awaitDaemonRunning(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			awaitDaemonRunning(5000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		//UI updates from non-GUI threads must use EventQueue.invokeLater (or SwingUtilities.invokeLater)
 		uiTimer = new Timer(true);
 		uiTimer.schedule(new TimerTask() {
@@ -162,6 +203,14 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 				});
 			}
 		}, 0, 1000);
+	}
+	
+	private void updateName(int idx, String name)
+	{
+		ioItems.set(idx, name);
+		selIOs.setItems(ioItems);;
+		selIOs.selectItemAtIndex(idx);
+		System.out.println(ioItems.size());
 	}
 	
 	private void updateUI() {
