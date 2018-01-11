@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 import com.ur.urcap.api.contribution.ProgramNodeContribution;
 import com.ur.urcap.api.contribution.ProgramNodeService;
@@ -7,24 +7,24 @@ import com.ur.urcap.api.domain.data.DataModel;
 
 import java.io.InputStream;
 
-public class URTestProgramNodeService implements ProgramNodeService {
+public class KingticIOProgramNodeService implements ProgramNodeService {
 
-	public URTestProgramNodeService() {
+	public KingticIOProgramNodeService() {
 	}
 
 	@Override
 	public String getId() {
-		return "TestNode";
+		return "KingticOutputNode";
 	}
 
 	@Override
 	public String getTitle() {
-		return "URTest";
+		return "设置输出";
 	}
 
 	@Override
 	public InputStream getHTML() {
-		InputStream is = this.getClass().getResourceAsStream("/com/nf/URTest/impl/programnode.html");
+		InputStream is = this.getClass().getResourceAsStream("/com/kingtic/kingticIO/impl/programnode.html");
 		return is;
 	}
 
@@ -35,11 +35,11 @@ public class URTestProgramNodeService implements ProgramNodeService {
 
 	@Override
 	public boolean isChildrenAllowed() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public ProgramNodeContribution createNode(URCapAPI api, DataModel model) {
-		return new URTestProgramNodeContribution(api, model);
+		return new KingticIOProgramNodeContribution(api, model);
 	}
 }

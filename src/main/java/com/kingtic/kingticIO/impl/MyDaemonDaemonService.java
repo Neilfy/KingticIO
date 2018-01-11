@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 import com.ur.urcap.api.contribution.DaemonContribution;
 import com.ur.urcap.api.contribution.DaemonService;
@@ -18,7 +18,8 @@ public class MyDaemonDaemonService implements DaemonService {
 	public void init(DaemonContribution daemonContribution) {
 		this.daemonContribution = daemonContribution;
 		try {
-			daemonContribution.installResource(new URL("file:com/nf/URTest/impl/daemon/"));
+			daemonContribution.installResource(new URL("file:com/kingtic/kingticIO/impl/daemon/"));
+			daemonContribution.start();
 		} catch (MalformedURLException e) {	}
 	}
 
@@ -26,7 +27,7 @@ public class MyDaemonDaemonService implements DaemonService {
 	public URL getExecutable() {
 		try {
 			// Two equivalent example daemons are available:
-			return new URL("file:com/nf/URTest/impl/daemon/hello-world.py"); // Python executable
+			return new URL("file:com/kingtic/kingticIO/impl/daemon/hello-world.py"); // Python executable
 			// return new URL("file:com/ur/urcap/examples/mydaemon/impl/daemon/HelloWorld"); // C++ executable
 		} catch (MalformedURLException e) {
 			return null;

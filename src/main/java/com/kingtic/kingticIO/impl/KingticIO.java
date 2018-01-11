@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 public class KingticIO  {
 	public String defaultName;

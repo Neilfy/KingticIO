@@ -21,7 +21,8 @@ def send_Command(value):
 	global connected, modbusClient
 	ret = False
 	if(connected):
-		ret = modbusClient.WriteSingleRegister(0, value)
+		vals = value.split(",")
+		ret = modbusClient.WriteSingleRegister(int(vals[0]), int(vals[1]))
 	return ret
 
 #connect_TCP("10.89.34.9")

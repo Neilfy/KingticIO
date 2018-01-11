@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;

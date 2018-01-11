@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -24,10 +24,10 @@ import com.ur.urcap.api.ui.component.InputTextField;
 import com.ur.urcap.api.ui.component.LabelComponent;
 import com.ur.urcap.api.ui.component.SelectDropDownList;
 import com.ur.urcap.api.ui.component.SelectList;
-import com.nf.NewTest.impl.MyDaemonDaemonService;
-import com.nf.NewTest.impl.XmlRpcMyDaemonInterface;
+import com.kingtic.kingticIO.impl.MyDaemonDaemonService;
+import com.kingtic.kingticIO.impl.XmlRpcMyDaemonInterface;
 
-public class URTestInstallationNodeContribution implements InstallationNodeContribution {
+public class KingticIOInstallationNodeContribution implements InstallationNodeContribution {
 	
 	//io名，地址，权限（0：启用，1：程序员操作，2：禁用）
 	private String[] addrs={"kingtic_in_0,0,0", "kingtic_in_1,10,0"
@@ -51,7 +51,7 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 	private XmlRpcMyDaemonInterface xmlRpcDaemonInterface;
 	private Timer uiTimer;
 
-	public URTestInstallationNodeContribution(MyDaemonDaemonService daemonService, DataModel model) {
+	public KingticIOInstallationNodeContribution(MyDaemonDaemonService daemonService, DataModel model) {
 		this.daemonService = daemonService;
 		this.model = model;
 		
@@ -81,11 +81,7 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", 40404);
 	}
 	
-	private String getIO(String key)
-	{
-		return "";
-	}
-
+	
 	@Input(id = "btnEnableDaemon")
 	private InputButton enableDaemonButton;
 
@@ -285,6 +281,16 @@ public class URTestInstallationNodeContribution implements InstallationNodeContr
 		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlRpcDaemonInterface.isReachable())) {
 			Thread.sleep(100);
 		}
+	}
+	
+	public ArrayList<Object> getIOItems()
+	{
+		return ioItems;
+	}
+	
+	public KingticIO getIO(int idx)
+	{
+		return ioInfo.get(idx);
 	}
 	
 	public String getXMLRPCVariable() {return XMLRPC_VARIABLE;}

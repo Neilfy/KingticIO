@@ -1,4 +1,4 @@
-package com.nf.NewTest.impl;
+package com.kingtic.kingticIO.impl;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

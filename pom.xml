@@ -5,10 +5,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.nf</groupId>
-	<artifactId>NewTest</artifactId>
+	<groupId>com.kingtic</groupId>
+	<artifactId>kingticIO</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>NewTest</name>
+	<name>kingticIO</name>
 	<packaging>bundle</packaging>
 
 	<properties>
@@ -18,7 +18,7 @@
 		<!--         that comes along with your URCap                           -->
 		<!--********************************************************************-->
 		<!--******************* BEGINNING OF URCAP META DATA *******************-->
-		<urcap.symbolicname>com.nf.NewTest</urcap.symbolicname>
+		<urcap.symbolicname>com.kingtic.kingticIO</urcap.symbolicname>
 		<urcap.vendor>URCaps R us Inc.</urcap.vendor>
 		<urcap.contactAddress>123 URCap Street</urcap.contactAddress>
 		<urcap.copyright>Copyright notice (C)</urcap.copyright>
@@ -38,7 +38,7 @@
 		<!--Host and standard user/password for UR Sim running in a VM-->
 		<ursimvm.install.host></ursimvm.install.host>
 		<ursimvm.install.username>ur</ursimvm.install.username>
-		<ursimvm.install.password>easybot</ursimvm.install.password>
+		<ursimvm.install.password>.</ursimvm.install.password>
 
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
@@ -72,7 +72,7 @@
 					<instructions>
 						<!--********** DO NOT MODIFY THE ENTRIES OF THIS SECTION **********-->
 						<Bundle-Category>URCap</Bundle-Category>
-						<Bundle-Activator>com.nf.NewTest.impl.Activator</Bundle-Activator>
+						<Bundle-Activator>com.kingtic.kingticIO.impl.Activator</Bundle-Activator>
 						<Bundle-Vendor>${urcap.vendor}</Bundle-Vendor>
 						<Bundle-ContactAddress>${urcap.contactAddress}</Bundle-ContactAddress>
 						<Bundle-Copyright>${urcap.copyright}</Bundle-Copyright>
