@@ -43,7 +43,6 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	
 	ArrayList<Object> ioItems = new ArrayList<Object>();
 	ArrayList<KingticIO> ioInfo = new ArrayList<KingticIO>();
-	//Map<String,KingticIO> ioInfo = new HashMap<String,KingticIO>();
 
 	private DataModel model;
 	
@@ -81,16 +80,6 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", 40404);
 	}
 	
-	
-	@Input(id = "btnEnableDaemon")
-	private InputButton enableDaemonButton;
-
-	@Input(id = "btnDisableDaemon")
-	private InputButton disableDaemonButton;
-
-	@Label(id = "lblDaemonStatus")
-	private LabelComponent daemonStatusLabel;
-	
 	@Input(id = "txtIP")
 	private InputTextField IPText;
 	
@@ -100,41 +89,33 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	@Label(id = "lblTcpStatus")
 	private LabelComponent tcpStatusLabel;
 	
-	@Input(id = "btnEnableDaemon")
-	public void onStartClick(InputEvent event) {
-		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
-			setDaemonEnabled(true);
-			applyDesiredDaemonStatus();
-		}
-	}
-
-	@Input(id = "btnDisableDaemon")
-	public void onStopClick(InputEvent event) {
-		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
-			setDaemonEnabled(false);
-			applyDesiredDaemonStatus();
-		}
-	}
 	
 	@Input(id = "btnConnectTCP")
 	public void onConnectClick(InputEvent event) {
 		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
-			try {
-				IP = IPText.getText();
-				if(!IP.isEmpty())
-				{
-					Boolean ret = xmlRpcDaemonInterface.ConnectTCP(IP);
-					//Boolean ret1 = xmlRpcDaemonInterface.SendCommand("11");
-					tcpStatusLabel.setText("连接"+(ret?"成功":"失败"));
-				}else
-				{
-					tcpStatusLabel.setText("IP地址不能为空！");
-				}
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+			if(daemonService.getDaemon().getState() == DaemonContribution.State.RUNNING)
+			{
+				try {
+					IP = IPText.getText();
+					if(!IP.isEmpty())
+					{
+						Boolean ret = xmlRpcDaemonInterface.ConnectTCP(IP);
+						//Boolean ret1 = xmlRpcDaemonInterface.SendCommand("11");
+						tcpStatusLabel.setText("连接"+(ret?"成功":"失败"));
+					}else
+					{
+						tcpStatusLabel.setText("IP地址不能为空！");
+					}
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+			}else
+			{
+				tcpStatusLabel.setText("daemon或Rpc启动失败！");
+			}
+			
 		}
 	}
 	
@@ -175,17 +156,10 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 
 	@Override
 	public void openView() {
-		enableDaemonButton.setText("Start Daemon");
-		disableDaemonButton.setText("Stop daemon");
 		connectTCPButton.setText("连接");
 		System.out.println("My Daemon\n");
 		selIOs.setItems(ioItems);
-//		try {
-//			awaitDaemonRunning(5000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 		//UI updates from non-GUI threads must use EventQueue.invokeLater (or SwingUtilities.invokeLater)
 		uiTimer = new Timer(true);
 		uiTimer.schedule(new TimerTask() {
@@ -212,14 +186,6 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	private void updateUI() {
 		DaemonContribution.State state = getDaemonState();
 
-		if (state == DaemonContribution.State.RUNNING) {
-			enableDaemonButton.setEnabled(false);
-			disableDaemonButton.setEnabled(true);
-		} else {
-			enableDaemonButton.setEnabled(true);
-			disableDaemonButton.setEnabled(false);
-		}
-
 		String text = "";
 		switch (state) {
 		case RUNNING:
@@ -232,7 +198,8 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 			text = "My Daemon failed";
 			break;
 		}
-		daemonStatusLabel.setText(text);
+		System.out.println(text);
+		//daemonStatusLabel.setText(text);
 	}
 
 	@Override
@@ -249,39 +216,11 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		// Apply the settings to the daemon on program start in the Installation pre-amble
 		writer.appendLine(XMLRPC_VARIABLE + ".connect_TCP(\"" + IP + "\")");
 	}
-	
-	private void setDaemonEnabled(Boolean enable) {
-		model.set(ENABLED_KEY, enable);
-	}
-	
-	private Boolean isDaemonEnabled() {
-		return model.get(ENABLED_KEY, true); //This daemon is enabled by default
-	}
-	
+
 	private DaemonContribution.State getDaemonState(){
 		return daemonService.getDaemon().getState();
 	}
-	
-	private void applyDesiredDaemonStatus() {
-		if (isDaemonEnabled()) {
-			// Download the daemon settings to the daemon process on initial start for real-time preview purposes
-			try {
-				awaitDaemonRunning(5000);
-			} catch(Exception e){
-				System.err.println("Could not set the title in the daemon process.");
-			}
-		} else {
-			daemonService.getDaemon().stop();
-		}
-	}
-	
-	private void awaitDaemonRunning(long timeOutMilliSeconds) throws InterruptedException {
-		daemonService.getDaemon().start();
-		long endTime = System.nanoTime() + timeOutMilliSeconds * 1000L * 1000L;
-		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlRpcDaemonInterface.isReachable())) {
-			Thread.sleep(100);
-		}
-	}
+
 	
 	public ArrayList<Object> getIOItems()
 	{

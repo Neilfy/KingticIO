@@ -25,14 +25,6 @@ public class XmlRpcMyDaemonInterface {
 		client.setConfig(config);
 	}
 
-	public boolean isReachable() {
-		try {
-			client.execute("get_title", new ArrayList<String>());
-			return true;
-		} catch (XmlRpcException e) {
-			return false;
-		}
-	}
 	
 	public Boolean ConnectTCP(String ip) throws XmlRpcException, UnknownResponseException {
 		ArrayList<String> args = new ArrayList<String>();
