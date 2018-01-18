@@ -4,6 +4,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
+import java.util.List;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,6 +40,14 @@ public class XmlRpcMyDaemonInterface {
 		Object result = client.execute("send_Command", args);
 		return processBoolean(result);
 	}
+	
+	public String GetIO(String value) throws XmlRpcException, UnknownResponseException {
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(value);
+		Object result = client.execute("get_IO", args);
+		return processString(result);
+	}
+
 
 	private boolean processBoolean(Object response) throws UnknownResponseException {
 		if (response instanceof Boolean) {

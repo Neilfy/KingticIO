@@ -303,7 +303,9 @@ class ModbusClient(object):
                 raise Exceptions.ModbusException("error reading");
             myList = list()
             for i in range(0, quantity):
-                myList.append((data[i*2+3+6]<<8) +data[i*2+4+6])            
+                val = int(data[i*2+3+6].encode('hex'),16)
+                val = (val<<8) + int(data[i*2+4+6].encode('hex'),16)
+                myList.append(val)
             return myList 
 
     def ReadInputRegisters(self, startingAddress, quantity):

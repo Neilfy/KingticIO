@@ -1,11 +1,17 @@
 package com.kingtic.kingticIO.impl;
 
 import java.awt.EventQueue;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.imageio.ImageIO;
 
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -30,29 +36,51 @@ import com.kingtic.kingticIO.impl.XmlRpcMyDaemonInterface;
 public class KingticIOInstallationNodeContribution implements InstallationNodeContribution {
 	
 	//io名，地址，权限（0：启用，1：程序员操作，2：禁用）
-	private String[] addrs={"kingtic_in_0,0,0", "kingtic_in_1,10,0"
-			, "kingtic_in_2,11,0","kingtic_out_0,100,0"
-			, "kingtic_out_1,101,0"};
+	private String[] addrs={"kingtic_in_0,0,0"
+			, "kingtic_in_1,1,0"
+			, "kingtic_in_2,2,0"
+			, "kingtic_in_3,3,0"
+			, "kingtic_in_4,4,0"
+			, "kingtic_in_5,5,0"
+			, "kingtic_in_6,6,0"
+			, "kingtic_in_7,7,0"
+			
+			,"kingtic_out_0,20,0"
+			, "kingtic_out_1,21,0"
+			, "kingtic_out_2,22,0"
+			, "kingtic_out_3,23,0"
+			, "kingtic_out_4,24,0"
+			, "kingtic_out_5,25,0"
+			, "kingtic_out_6,26,0"
+			, "kingtic_out_7,27,0"};
 	
 
 	private static final String ENABLED_KEY = "enabled";
 	private static final String XMLRPC_VARIABLE = "my_daemon";
+	private final static String IMAGE_RED = "com/kingtic/kingticIO/impl/red.png";
+	private final static String IMAGE_GRAY = "com/kingtic/kingticIO/impl/gray.png";
 	
 	
 	private String IP = "";
 	
 	ArrayList<Object> ioItems = new ArrayList<Object>();
 	ArrayList<KingticIO> ioInfo = new ArrayList<KingticIO>();
+	ArrayList<InputButton> ioBtn = new ArrayList<InputButton>();
 
 	private DataModel model;
 	
 	private final MyDaemonDaemonService daemonService;
 	private XmlRpcMyDaemonInterface xmlRpcDaemonInterface;
 	private Timer uiTimer;
+	
+	private BufferedImage img_red, img_gray;
 
 	public KingticIOInstallationNodeContribution(MyDaemonDaemonService daemonService, DataModel model) {
 		this.daemonService = daemonService;
 		this.model = model;
+		//
+		img_red = loadImage(IMAGE_RED);
+		img_gray = loadImage(IMAGE_GRAY);
 		
 		//读IO配置信息  
 		for(int i=0; i<addrs.length; ++i)
@@ -78,6 +106,31 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		}
 
 		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", 40404);
+	}
+	
+	public void initIObtn(){
+		ioBtn.add(ki0);
+		ioBtn.add(ki1);
+		ioBtn.add(ki2);
+		ioBtn.add(ki3);
+		ioBtn.add(ki4);
+		ioBtn.add(ki5);
+		ioBtn.add(ki6);
+		ioBtn.add(ki7);
+		
+		ioBtn.add(ko0);
+		ioBtn.add(ko1);
+		ioBtn.add(ko2);
+		ioBtn.add(ko3);
+		ioBtn.add(ko4);
+		ioBtn.add(ko5);
+		ioBtn.add(ko6);
+		ioBtn.add(ko7);
+		
+		for(int i=0; i<ioBtn.size(); ++i)
+		{
+			ioBtn.get(i).setImage(img_gray);
+		}
 	}
 	
 	@Input(id = "txtIP")
@@ -126,6 +179,40 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	@Input(id = "btnClean")
 	private InputButton cleanBotton;
 	
+	@Input(id = "ki0")
+	private InputButton ki0;
+	@Input(id = "ki1")
+	private InputButton ki1;
+	@Input(id = "ki2")
+	private InputButton ki2;
+	@Input(id = "ki3")
+	private InputButton ki3;
+	@Input(id = "ki4")
+	private InputButton ki4;
+	@Input(id = "ki5")
+	private InputButton ki5;
+	@Input(id = "ki6")
+	private InputButton ki6;
+	@Input(id = "ki7")
+	private InputButton ki7;
+	
+	@Input(id = "ko0")
+	private InputButton ko0;
+	@Input(id = "ko1")
+	private InputButton ko1;
+	@Input(id = "ko2")
+	private InputButton ko2;
+	@Input(id = "ko3")
+	private InputButton ko3;
+	@Input(id = "ko4")
+	private InputButton ko4;
+	@Input(id = "ko5")
+	private InputButton ko5;
+	@Input(id = "ko6")
+	private InputButton ko6;
+	@Input(id = "ko7")
+	private InputButton ko7;
+	
 	@Input(id = "txtioName")
 	public void onMessageChange(InputEvent event) {
 		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
@@ -157,9 +244,11 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	@Override
 	public void openView() {
 		connectTCPButton.setText("连接");
-		System.out.println("My Daemon\n");
+		cleanBotton.setText("清除");
 		selIOs.setItems(ioItems);
-
+		//io btn
+		initIObtn();
+		
 		//UI updates from non-GUI threads must use EventQueue.invokeLater (or SwingUtilities.invokeLater)
 		uiTimer = new Timer(true);
 		uiTimer.schedule(new TimerTask() {
@@ -172,7 +261,26 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 					}
 				});
 			}
-		}, 0, 1000);
+		}, 0, 3000);
+	}
+	
+	private BufferedImage loadImage(String path) {
+		BufferedImage bufferedImage = null;
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(this.getClass().getClassLoader().getResourceAsStream(path));
+		try {
+			bufferedImage = ImageIO.read(bufferedInputStream);
+		} catch (IOException e) {
+			System.err.println("Unable to load image: " + path);
+		} finally {
+			if (bufferedImage != null) {
+				try {
+					bufferedInputStream.close();
+				} catch (IOException e) {
+					System.err.println("Failed to close image input stream " + e.getMessage());
+				}
+			}
+		}
+		return bufferedImage;
 	}
 	
 	private void updateName(int idx, String name)
@@ -184,22 +292,32 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	}
 	
 	private void updateUI() {
-		DaemonContribution.State state = getDaemonState();
-
-		String text = "";
-		switch (state) {
-		case RUNNING:
-			text = "My Daemon runs";
-			break;
-		case STOPPED:
-			text = "My Daemon stopped";
-			break;
-		case ERROR:
-			text = "My Daemon failed";
-			break;
+		try {
+			String list = xmlRpcDaemonInterface.GetIO("0,16");
+			
+			if(!list.isEmpty())
+			{
+				String[] vals = list.split(",");
+				for(int i=0; i<vals.length; ++i)
+				{
+					System.out.println(ioBtn.get(i));
+					if(Integer.parseInt(vals[i])==0)
+					{
+						ioBtn.get(i).setImage(img_gray);
+					}else
+					{
+						ioBtn.get(i).setImage(img_red);
+					}
+				}
+			}
+			
+		} catch (XmlRpcException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownResponseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println(text);
-		//daemonStatusLabel.setText(text);
 	}
 
 	@Override
