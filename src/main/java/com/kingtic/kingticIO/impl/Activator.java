@@ -23,6 +23,7 @@ public class Activator implements BundleActivator {
 
 		bundleContext.registerService(InstallationNodeService.class, helloWorldInstallationNodeService, null);
 		bundleContext.registerService(ProgramNodeService.class, new KingticIOProgramNodeService(), null);
+		bundleContext.registerService(ProgramNodeService.class, new KingticIOInputProgramNodeService(), null);
 		bundleContext.registerService(DaemonService.class, daemonService, null);
 	}
 

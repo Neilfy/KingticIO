@@ -41,10 +41,31 @@ public class XmlRpcMyDaemonInterface {
 		return processBoolean(result);
 	}
 	
+	public Boolean WriteSingleCoil(String value) throws XmlRpcException, UnknownResponseException {
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(value);
+		Object result = client.execute("WriteSingleCoil", args);
+		return processBoolean(result);
+	}
+	
 	public String GetIO(String value) throws XmlRpcException, UnknownResponseException {
 		ArrayList<String> args = new ArrayList<String>();
 		args.add(value);
 		Object result = client.execute("get_IO", args);
+		return processString(result);
+	}
+	
+	public String ReadDiscreteInputs(String value) throws XmlRpcException, UnknownResponseException {
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(value);
+		Object result = client.execute("ReadDiscreteInputs", args);
+		return processString(result);
+	}
+	
+	public String ReadCoils(String value) throws XmlRpcException, UnknownResponseException {
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(value);
+		Object result = client.execute("ReadCoils", args);
 		return processString(result);
 	}
 

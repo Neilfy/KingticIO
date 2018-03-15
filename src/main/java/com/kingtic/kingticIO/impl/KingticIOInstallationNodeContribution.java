@@ -44,15 +44,32 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 			, "kingtic_in_5,5,0"
 			, "kingtic_in_6,6,0"
 			, "kingtic_in_7,7,0"
+			, "kingtic_in_8,8,0"
+			, "kingtic_in_9,9,0"
+			, "kingtic_in_10,10,0"
+			, "kingtic_in_11,11,0"
+			, "kingtic_in_12,12,0"
+			, "kingtic_in_13,13,0"
+			, "kingtic_in_14,14,0"
+			, "kingtic_in_15,15,0"
 			
-			,"kingtic_out_0,20,0"
-			, "kingtic_out_1,21,0"
-			, "kingtic_out_2,22,0"
-			, "kingtic_out_3,23,0"
-			, "kingtic_out_4,24,0"
-			, "kingtic_out_5,25,0"
-			, "kingtic_out_6,26,0"
-			, "kingtic_out_7,27,0"};
+			,"kingtic_out_0,0,0"
+			, "kingtic_out_1,1,0"
+			, "kingtic_out_2,2,0"
+			, "kingtic_out_3,3,0"
+			, "kingtic_out_4,4,0"
+			, "kingtic_out_5,5,0"
+			, "kingtic_out_6,6,0"
+			, "kingtic_out_7,7,0"
+			, "kingtic_out_8,8,0"
+			, "kingtic_out_9,9,0"
+			, "kingtic_out_10,10,0"
+			, "kingtic_out_11,11,0"
+			, "kingtic_out_12,12,0"
+			, "kingtic_out_13,13,0"
+			, "kingtic_out_14,14,0"
+			, "kingtic_out_15,15,0"
+	};
 	
 
 	private static final String ENABLED_KEY = "enabled";
@@ -117,6 +134,14 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		ioBtn.add(ki5);
 		ioBtn.add(ki6);
 		ioBtn.add(ki7);
+		ioBtn.add(ki8);
+		ioBtn.add(ki9);
+		ioBtn.add(ki10);
+		ioBtn.add(ki11);
+		ioBtn.add(ki12);
+		ioBtn.add(ki13);
+		ioBtn.add(ki14);
+		ioBtn.add(ki15);
 		
 		ioBtn.add(ko0);
 		ioBtn.add(ko1);
@@ -126,6 +151,14 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		ioBtn.add(ko5);
 		ioBtn.add(ko6);
 		ioBtn.add(ko7);
+		ioBtn.add(ko8);
+		ioBtn.add(ko9);
+		ioBtn.add(ko10);
+		ioBtn.add(ko11);
+		ioBtn.add(ko12);
+		ioBtn.add(ko13);
+		ioBtn.add(ko14);
+		ioBtn.add(ko15);
 		
 		for(int i=0; i<ioBtn.size(); ++i)
 		{
@@ -195,6 +228,22 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	private InputButton ki6;
 	@Input(id = "ki7")
 	private InputButton ki7;
+	@Input(id = "ki8")
+	private InputButton ki8;
+	@Input(id = "ki9")
+	private InputButton ki9;
+	@Input(id = "ki10")
+	private InputButton ki10;
+	@Input(id = "ki11")
+	private InputButton ki11;
+	@Input(id = "ki12")
+	private InputButton ki12;
+	@Input(id = "ki13")
+	private InputButton ki13;
+	@Input(id = "ki14")
+	private InputButton ki14;
+	@Input(id = "ki15")
+	private InputButton ki15;
 	
 	@Input(id = "ko0")
 	private InputButton ko0;
@@ -212,6 +261,22 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	private InputButton ko6;
 	@Input(id = "ko7")
 	private InputButton ko7;
+	@Input(id = "ko8")
+	private InputButton ko8;
+	@Input(id = "ko9")
+	private InputButton ko9;
+	@Input(id = "ko10")
+	private InputButton ko10;
+	@Input(id = "ko11")
+	private InputButton ko11;
+	@Input(id = "ko12")
+	private InputButton ko12;
+	@Input(id = "ko13")
+	private InputButton ko13;
+	@Input(id = "ko14")
+	private InputButton ko14;
+	@Input(id = "ko15")
+	private InputButton ko15;
 	
 	@Input(id = "txtioName")
 	public void onMessageChange(InputEvent event) {
@@ -240,9 +305,44 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		}
 	}
 	
+	///tab
+	@Input(id = "tabIoSetting")
+	private InputButton tabIoSetting;
+	@Input(id = "tabIoMonitor")
+	private InputButton tabIoMonitor;
+	
+	@Div(id="divIoSetting")
+	private DivComponent divIOSetting;
+	@Div(id="divIoMonitor")
+	private DivComponent divIOMonitor;
+	
+	@Input(id = "tabIoSetting")
+	public void ontabSettingClick(InputEvent event) {
+		if (event.getEventType() == InputEvent.EventType.ON_RELEASED) {
+			divIOSetting.setVisible(true);
+			divIOMonitor.setVisible(false);
+			tabIoSetting.setEnabled(false);
+			tabIoMonitor.setEnabled(true);
+		}
+	}
+	
+	@Input(id = "tabIoMonitor")
+	public void ontabMonitorClick(InputEvent event) {
+		if (event.getEventType() == InputEvent.EventType.ON_RELEASED) {
+			divIOMonitor.setVisible(true);
+			divIOSetting.setVisible(false);
+			tabIoSetting.setEnabled(true);
+			tabIoMonitor.setEnabled(false);
+		}
+	}
 
 	@Override
 	public void openView() {
+		divIOMonitor.setVisible(false);
+		tabIoSetting.setText("I/O设置");
+		tabIoMonitor.setText("I/O监控");
+		tabIoSetting.setEnabled(false);
+		
 		connectTCPButton.setText("连接");
 		cleanBotton.setText("清除");
 		selIOs.setItems(ioItems);
@@ -261,7 +361,7 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 					}
 				});
 			}
-		}, 0, 3000);
+		}, 0, 300);
 	}
 	
 	private BufferedImage loadImage(String path) {
@@ -293,20 +393,53 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 	
 	private void updateUI() {
 		try {
-			String list = xmlRpcDaemonInterface.GetIO("0,16");
+//			String list = xmlRpcDaemonInterface.GetIO("0,1");
+//			
+//			if(!list.isEmpty())
+//			{
+//				String[] vals = list.split(",");
+//				for(int i=0; i<vals.length; ++i)
+//				{
+//					System.out.println(ioBtn.get(i));
+//					if(Integer.parseInt(vals[i])==0)
+//					{
+//						ioBtn.get(i).setImage(img_gray);
+//					}else
+//					{
+//						ioBtn.get(i).setImage(img_red);
+//					}
+//				}
+//			}
 			
-			if(!list.isEmpty())
+			String ret_in = xmlRpcDaemonInterface.GetIO("0,1");
+			String ret_out = xmlRpcDaemonInterface.GetIO("1,1");
+			if(!ret_in.isEmpty() && !ret_out.isEmpty())
 			{
-				String[] vals = list.split(",");
-				for(int i=0; i<vals.length; ++i)
+				Boolean[] status_in = new Boolean[16];
+				Boolean[] status_out = new Boolean[16];
+				Integer val_in = new Integer(ret_in);
+				Integer val_out = new Integer(ret_out);
+				for(int i=0; i<16; i++)
 				{
-					System.out.println(ioBtn.get(i));
-					if(Integer.parseInt(vals[i])==0)
-					{
-						ioBtn.get(i).setImage(img_gray);
-					}else
+					status_in[i] = ((val_in>>i) & 0x1) == 0 ? false : true;
+					status_out[i] = ((val_out>>i) & 0x1) == 0 ? false : true;
+				}
+				for(int i=0; i<16; i++)
+				{
+					if(status_in[i])
 					{
 						ioBtn.get(i).setImage(img_red);
+					}else
+					{
+						ioBtn.get(i).setImage(img_gray);
+					}
+					
+					if(status_out[i])
+					{
+						ioBtn.get(i+16).setImage(img_red);
+					}else
+					{
+						ioBtn.get(i+16).setImage(img_gray);
 					}
 				}
 			}
@@ -318,6 +451,18 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private Boolean[] getStatusFromHoldingRegisters() throws XmlRpcException, UnknownResponseException
+	{
+		Boolean[] status = new Boolean[16];
+		String ret = xmlRpcDaemonInterface.GetIO("0,1");
+		Short val = new Short(ret);
+		for(int i=0; i<16; i++)
+		{
+			status[i] = ((val>>i) & 0x1) == 0 ? false : true;
+		}
+		return status;
 	}
 
 	@Override
@@ -345,7 +490,37 @@ public class KingticIOInstallationNodeContribution implements InstallationNodeCo
 		return ioItems;
 	}
 	
+	public ArrayList<Object> getIOInputItems()
+	{
+		ArrayList<Object> ret = new ArrayList<Object>();
+		for(int i=0; i<16; ++i)
+		{
+			ret.add(ioItems.get(i));
+		}
+		return ret;
+	}
+	
+	public ArrayList<Object> getIOOutputItems()
+	{
+		ArrayList<Object> ret = new ArrayList<Object>();
+		for(int i=16; i<32; ++i)
+		{
+			ret.add(ioItems.get(i));
+		}
+		return ret;
+	}
+	
 	public KingticIO getIO(int idx)
+	{
+		return ioInfo.get(idx);
+	}
+	
+	public KingticIO getIOOutput(int idx)
+	{
+		return ioInfo.get(16+idx);
+	}
+	
+	public KingticIO getIOInput(int idx)
 	{
 		return ioInfo.get(idx);
 	}

@@ -30,7 +30,7 @@ class ModbusClient(object):
         Second Parameter is the Port the Server listens to
         """
         self.__transactionIdentifier=0
-        self._unitIdentifier = 1;
+        self._unitIdentifier = 255;
         self.ser = None
         self.tcpClientSocket = None
         self.__connected = False
@@ -132,7 +132,7 @@ class ModbusClient(object):
                 raise Exceptions.ModbusException("error reading");
             myList = list()
             for i in range(0, quantity):
-                myList.append(bool((data[int(i/8)+3] >> int(i%8)) & 0x1))            
+                myList.append(bool((data[int(i/8)+3] >> int(i%8)) & 0x1)) 
             return myList
         else:
             protocolIdentifierLSB = 0x00;
@@ -157,7 +157,10 @@ class ModbusClient(object):
                 raise Exceptions.ModbusException("error reading");
             myList = list()
             for i in range(0, quantity):
-                myList.append(bool((data[int(i/8)+3+6] >> int(i%8)) & 0x1))            
+                #myList.append(bool((data[int(i/8)+3+6] >> int(i%8)) & 0x1)) 
+                val = int(data[int(i/8)+3+6].encode('hex'),16)
+                val = (val>>int(i%8)) & 0x1
+                myList.append(val)           
             return myList
 
 
@@ -233,7 +236,10 @@ class ModbusClient(object):
                 raise Exceptions.ModbusException("error reading");
             myList = list()
             for i in range(0, quantity):
-                myList.append(bool((data[int(i/8)+3+6] >> int(i%8)) & 0x1))            
+                #myList.append(bool((data[int(i/8)+3+6] >> int(i%8)) & 0x1))            
+                val = int(data[int(i/8)+3+6].encode('hex'),16)
+                val = (val>>int(i%8)) & 0x1
+                myList.append(val)
             return myList
         
         
@@ -439,7 +445,7 @@ class ModbusClient(object):
             if ((data[1+6] == 0x85) & (data[2+6] == 0x04)):
                 raise Exceptions.ModbusException("error reading");
 
-                return True 
+            return True 
    
         
     def WriteSingleRegister(self, startingAddress, value):

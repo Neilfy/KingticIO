@@ -29,7 +29,7 @@ import com.ur.urcap.api.ui.component.SelectEvent;
 import static com.ur.urcap.api.ui.component.InputEvent.EventType.ON_PRESSED;
 import static com.ur.urcap.api.ui.component.SelectEvent.EventType.ON_SELECT;
 
-public class KingticIOProgramNodeContribution implements ProgramNodeContribution {
+public class KingticIOInputProgramNodeContribution implements ProgramNodeContribution {
 	private static final String SELECTED_IO = "selected_io";
 	private static final String RADIO_ON = "radio_on";
 	private final static String IMAGE_PATH = "com/kingtic/kingticIO/impl/logo.png";
@@ -37,7 +37,7 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 	private final DataModel model;
 	private final URCapAPI api;
 
-	public KingticIOProgramNodeContribution(URCapAPI api, DataModel model) {
+	public KingticIOInputProgramNodeContribution(URCapAPI api, DataModel model) {
 		this.api = api;
 		this.model = model;
 	}
@@ -45,13 +45,13 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 	@Img(id="img")
 	private ImgComponent imgComponent;
 	
-	@Select(id="selOutput")
-	private SelectDropDownList OutputSelect;
+	@Select(id="selInput")
+	private SelectDropDownList InputSelect;
 	
-	@Select(id = "selOutput")
+	@Select(id = "selInput")
 	private void selectIO(SelectEvent event) {
 		if (event.getEvent() == ON_SELECT) {
-			int idx = OutputSelect.getSelectedIndex();
+			int idx = InputSelect.getSelectedIndex();
 			model.set(SELECTED_IO, idx);
 		}
 	}
@@ -68,28 +68,6 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 	@Input(id="radioOff")
 	private InputRadioButton radioOff;
 	
-	
-	@Input(id = "btnSend")
-	private InputButton cmdSendButton;
-
-	@Input(id = "btnSend")
-	public void onSendClick(InputEvent event) {
-		if (event.getEventType() == InputEvent.EventType.ON_CHANGE) {
-			int idx = OutputSelect.getSelectedIndex();
-			int value = radioOn.isSelected() ? 1 : 0;
-			KingticIO io = getInstallation().getIOOutput(idx);
-			String cmd = io.addr + "," + value;
-			try {
-				//getInstallation().getXmlRpcDaemonInterface().SendCommand(cmd);
-				getInstallation().getXmlRpcDaemonInterface().WriteSingleCoil(cmd);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		}
-	}
-	
-	
 
 	@Override
 	public void openView() {
@@ -98,14 +76,13 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 		if (img != null) {
 			imgComponent.setImage(img);
 		}
-		OutputSelect.setItems(getInstallation().getIOOutputItems());
-		OutputSelect.selectItemAtIndex(model.get(SELECTED_IO, 0));
+		InputSelect.setItems(getInstallation().getIOInputItems());
+		InputSelect.selectItemAtIndex(model.get(SELECTED_IO, 0));
 		
 		if(model.get(RADIO_ON, true))
 			radioOn.setSelected();
 		else
 			radioOff.setSelected();
-		cmdSendButton.setText("立即执行此动作");
 	}
 	
 	private BufferedImage loadImage() {
@@ -133,7 +110,7 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 
 	@Override
 	public String getTitle() {
-		return "设置输出";
+		return "设置输入";
 	}
 
 	@Override
@@ -145,12 +122,13 @@ public class KingticIOProgramNodeContribution implements ProgramNodeContribution
 	public void generateScript(ScriptWriter writer) {
 		int idx = model.get(SELECTED_IO, 0);
 		int value = model.get(RADIO_ON, true) ? 1 : 0;
-		KingticIO io = getInstallation().getIOOutput(idx);
-		String cmd = io.addr + "," + value;
+		KingticIO io = getInstallation().getIOInput(idx);
+		String cmd = io.addr + ",1";
 		
-		//writer.assign("ret", getInstallation().getXMLRPCVariable() + ".WriteSingleCoil(\"" + cmd + "\")");
-		writer.appendLine(getInstallation().getXMLRPCVariable() + ".WriteSingleCoil(\"" + cmd + "\")");
-		//writer.appendLine("popup(ret, ret, False, False, blocking=True)");
+		writer.appendLine("while ("+getInstallation().getXMLRPCVariable()+".ReadDiscreteInputs(\""+cmd+"\") != \""+value+"\"):");
+		writer.appendLine("  sync()");
+		writer.appendLine("end");
+		
 		writer.writeChildren();
 	}
 
